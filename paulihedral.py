@@ -833,6 +833,7 @@ def Paulihedral_on_mixed_circuit(
             unPaulihedraled_phy_circ=dag_to_circuit(phy_dag)
             unPaulihedraled_phy_circ._layout=layout_with_ancilla
             unPaulihedraled_phy_circ._layout=None
+            #layer[3]=unPaulihedraled_phy_circ#VI
             '''get the unfolded physical Quantum Circuit'''
             init_layout=Layout()
             '''
@@ -876,7 +877,7 @@ def Paulihedral_on_mixed_circuit(
                     do_max_iteration=do_max_iteration,
                     used_phy_qubits_list=layer[4]
             )
-            layer[3]=Paulihedraled_phy_circ
+            layer[3]=Paulihedraled_phy_circ#VI
     #new_block_list_printing(new_block_list)
     '''
     Now in new_block_list:
@@ -921,6 +922,12 @@ def Paulihedral_on_mixed_circuit(
         final_dag=layout_transform.run(circuit_to_dag(final_result))
         final_result=dag_to_circuit(final_dag).extend(block[3])
 
+    '''let the layout of the last layer match the layout of the first one'''
+    layout_transform = LayoutTransformation(
+        coupling_map=coupling_map, from_layout=new_block_list[idx][2], to_layout=new_block_list[0][2]
+    )
+    final_dag = layout_transform.run(circuit_to_dag(final_result))
+    final_result = dag_to_circuit(final_dag)
 
     #print(final_layout,"\n",final_result)
     final_result._layout=final_layout
